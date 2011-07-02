@@ -23,6 +23,8 @@
  * @example  $(".numeric").numeric({ decimal : "," }); // use , as separator
  * @example  $(".numeric").numeric({ negative : false }); // do not allow negative values
  * @example  $(".numeric").numeric(null, callback); // use default values, pass on the 'callback' function
+ * @example  $(".numeric").numeric({ precision: 2 }); // allow only two numbers after the decimal point.
+ * @example  $(".numeric").numeric({ precision: 0 }); // Same as $(".numeric").numeric({ decimal : false });
  *
  */
 $.fn.numeric = function(config, callback)
@@ -40,8 +42,24 @@ $.fn.numeric = function(config, callback)
 	var negative = (config.negative === true) ? true : false;
 	// callback function
 	var callback = typeof callback == "function" ? callback : function(){};
+	// precision
+	var precision;
+	if ((typeof config.precision) == "number")
+	{
+		if (config.precision == 0)
+		{
+			decimal = false;
+			precision = -1;
+		}
+		else
+			precision = config.precision;
+	}
+	else
+		precision = -1;
+	
+	var precision = (typeof config.precision) == "number" ? config.precision : -1;
 	// set data and methods
-	return this.data("numeric.decimal", decimal).data("numeric.negative", negative).data("numeric.callback", callback).keypress($.fn.numeric.keypress).keyup($.fn.numeric.keyup).blur($.fn.numeric.blur);
+	return this.data("numeric.decimal", decimal).data("numeric.negative", negative).data("numeric.callback", callback).data("numeric.precision", precision).keypress($.fn.numeric.keypress).keyup($.fn.numeric.keyup).blur($.fn.numeric.blur);
 }
 
 $.fn.numeric.keypress = function(e)
@@ -129,9 +147,23 @@ $.fn.numeric.keypress = function(e)
 			}
 		}
 	}
+	//if a number key was pressed.
 	else
 	{
-		allow = true;
+		// If precision >= 0, make sure there's only <precision> characters
+		// after the decimal point.
+		if($.data(this, "numeric.precision") >= 0)
+		{
+			var decimalPosition = this.value.indexOf(decimal);
+			//If there is a decimal and the cursor is after the decimal.
+			if (decimalPosition >= 0
+				&& $.fn.getSelectionStart(this) > decimalPosition)
+				allow = this.value.length - decimalPosition - 1 < $.data(this, "numeric.precision");
+			else
+				allow = true;
+		}
+		else
+			allow = true;
 	}
 	return allow;
 }
@@ -213,7 +245,12 @@ $.fn.numeric.keyup = function(e)
 					val = val.substring(0, i) + val.substring(i + 1);
 				}
 			}
+			// remove numbers after the decimal so that precision matches.
+			if ($.data(this, "numeric.precision") >= 0)
+				val = val.substring(0, firstDecimal+$.data(this, "numeric.precision") + 1);
+				
 		}
+		
 		// set the value and prevent the cursor moving to the end
 		this.value = val;
 		$.fn.setSelection(this, carat);

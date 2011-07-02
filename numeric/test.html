@@ -14,6 +14,8 @@
 		<input class="positive" type="text" />
 		No negative values (integer only):
 		<input class="positive-integer" type="text" />
+		Two decimal points:
+		<input class="precision" type="text" />
 		<a href="#" id="remove">Remove numeric</a>
 	</form>
 	<script type="text/javascript">
@@ -21,11 +23,12 @@
 	$(".integer").numeric(false, function() { alert("Integers only"); this.value = ""; this.focus(); });
 	$(".positive").numeric({ negative: false }, function() { alert("No negative values"); this.value = ""; this.focus(); });
 	$(".positive-integer").numeric({ decimal: false, negative: false }, function() { alert("Positive integers only"); this.value = ""; this.focus(); });
+	$(".precision").numeric({ precision: 2 });
 	$("#remove").click(
 		function(e)
 		{
 			e.preventDefault();
-			$(".numeric,.integer,.positive").removeNumeric();
+			$(".numeric,.integer,.positive,.precision").removeNumeric();
 		}
 	);
 	</script>
