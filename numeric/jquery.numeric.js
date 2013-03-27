@@ -25,6 +25,8 @@
  * @example  $(".numeric").numeric(null, callback); // use default values, pass on the 'callback' function
  * @example  $(".numeric").numeric({ scale: 2 }); // allow only two numbers after the decimal point.
  * @example  $(".numeric").numeric({ scale: 0 }); // Same as $(".numeric").numeric({ decimal : false });
+ * @example  $(".numeric").numeric({ precision: 2 }); // allow only two numbers.
+ * @example  $(".numeric").numeric({ precision: 4, scale: 2 }); // allow four numbers with two decimals. (99.99)
  *
  */
 $.fn.numeric = function(config, callback)
@@ -56,10 +58,17 @@ $.fn.numeric = function(config, callback)
 	}
 	else
 		scale = -1;
-	
 	var scale = (typeof config.scale) == "number" ? config.scale : -1;
+	// precision
+	var precision;
+	if ((typeof config.precision) == "number")
+	{
+		precision = config.precision;
+	}
+	else
+		precision = 0;
 	// set data and methods
-	return this.data("numeric.decimal", decimal).data("numeric.negative", negative).data("numeric.callback", callback).data("numeric.scale", scale).keypress($.fn.numeric.keypress).keyup($.fn.numeric.keyup).blur($.fn.numeric.blur);
+	return this.data("numeric.decimal", decimal).data("numeric.negative", negative).data("numeric.callback", callback).data("numeric.scale", scale).data("numeric.precision", precision).keypress($.fn.numeric.keypress).keyup($.fn.numeric.keyup).blur($.fn.numeric.blur);
 }
 
 $.fn.numeric.keypress = function(e)
@@ -155,16 +164,39 @@ $.fn.numeric.keypress = function(e)
 		if($.data(this, "numeric.scale") >= 0)
 		{
 			var decimalPosition = this.value.indexOf(decimal);
-			//If there is a decimal and the cursor is after the decimal.
-			if (decimalPosition >= 0
-				&& $.fn.getSelectionStart(this) > decimalPosition)
-				allow = this.value.length - decimalPosition - 1 < $.data(this, "numeric.scale");
+			//If there is a decimal.
+			if (decimalPosition >= 0)
+			{
+				//If the cursor is after the decimal.
+				if ($.fn.getSelectionStart(this) > decimalPosition)
+					allow = this.value.length - decimalPosition - 1 < $.data(this, "numeric.scale");
+				else
+				{
+					decimalsQuantity = this.value.length - decimalPosition - 1;
+					integersQuantity = (this.value.length - 1) - decimalsQuantity;
+					alert(decimalsQuantity + " " + integersQuantity);
+					//If precision > 0, integers and decimals quantity should not be greater than precision
+					alert(integersQuantity + " " + ($.data(this, "numeric.precision") - $.data(this, "numeric.scale")));
+					if (integersQuantity < ($.data(this, "numeric.precision") - $.data(this, "numeric.scale")))
+						allow = true;
+					else
+						allow = false;
+				}
+			}
+			//If there is no decimal
+			else
+				if ($.data(this, "numeric.precision") > 0)
+					allow = this.value.replace($.data(this, "numeric.decimal"), "").length < $.data(this, "numeric.precision") - $.data(this, "numeric.scale");
+				else
+					allow = true;
+		}
+		else
+			// If precision > 0, make sure there's not more digits than precision
+			if ($.data(this, "numeric.precision") > 0)
+				allow = this.value.replace($.data(this, "numeric.decimal"), "").length < $.data(this, "numeric.precision");
 			else
 				allow = true;
 		}
-		else
-			allow = true;
-	}
 	return allow;
 }
 
@@ -248,8 +280,13 @@ $.fn.numeric.keyup = function(e)
 			// remove numbers after the decimal so that scale matches.
 			if ($.data(this, "numeric.scale") >= 0)
 				val = val.substring(0, firstDecimal+$.data(this, "numeric.scale") + 1);
-				
+			// remove numbers so that precision matches.
+			if ($.data(this, "numeric.precision") > 0)
+				val = val.substring(0, $.data(this, "numeric.precision") + 1);
 		}
+		// limite the integers quantity, necessary when user delete decimal separator
+		else if ($.data(this, "numeric.precision") > 0)
+			val = val.substring(0, ($.data(this, "numeric.precision") - $.data(this, "numeric.scale")));
 		
 		// set the value and prevent the cursor moving to the end
 		this.value = val;
