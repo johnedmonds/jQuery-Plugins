@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="jquery.numeric.js"></script>
 </head>
 <body>
@@ -15,7 +15,7 @@
 		No negative values (integer only):
 		<input class="positive-integer" type="text" />
 		Two decimal points:
-		<input class="precision" type="text" />
+		<input class="scale" type="text" />
 		<a href="#" id="remove">Remove numeric</a>
 	</form>
 	<script type="text/javascript">
@@ -23,12 +23,12 @@
 	$(".integer").numeric(false, function() { alert("Integers only"); this.value = ""; this.focus(); });
 	$(".positive").numeric({ negative: false }, function() { alert("No negative values"); this.value = ""; this.focus(); });
 	$(".positive-integer").numeric({ decimal: false, negative: false }, function() { alert("Positive integers only"); this.value = ""; this.focus(); });
-	$(".precision").numeric({ precision: 2 });
+	$(".scale").numeric({ scale: 2 });
 	$("#remove").click(
 		function(e)
 		{
 			e.preventDefault();
-			$(".numeric,.integer,.positive,.precision").removeNumeric();
+			$(".numeric,.integer,.positive,.scale").removeNumeric();
 		}
 	);
 	</script>
