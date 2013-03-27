@@ -174,9 +174,7 @@ $.fn.numeric.keypress = function(e)
 				{
 					decimalsQuantity = this.value.length - decimalPosition - 1;
 					integersQuantity = (this.value.length - 1) - decimalsQuantity;
-					alert(decimalsQuantity + " " + integersQuantity);
 					//If precision > 0, integers and decimals quantity should not be greater than precision
-					alert(integersQuantity + " " + ($.data(this, "numeric.precision") - $.data(this, "numeric.scale")));
 					if (integersQuantity < ($.data(this, "numeric.precision") - $.data(this, "numeric.scale")))
 						allow = true;
 					else
