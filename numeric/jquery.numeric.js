@@ -1,3 +1,4 @@
+/*
  *
  * Copyright (c) 2006-2011 Sam Collett (http://www.texotela.co.uk)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -57,7 +58,6 @@ $.fn.numeric = function(config, callback)
 	}
 	else
 		scale = -1;
-	var scale = (typeof config.scale) == "number" ? config.scale : -1;
 	// precision
 	var precision;
 	if ((typeof config.precision) == "number")
