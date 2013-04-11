@@ -4,7 +4,7 @@
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
  * and GPL (http://www.opensource.org/licenses/gpl-license.php) licenses.
  *
- * Version 2.2.5
+ * Version 2.2.6
  * Demo: http://www.texotela.co.uk/code/jquery/select/
  *
  *
@@ -74,7 +74,7 @@ $.fn.addOption = function()
 	// multiple items
 	var m = false;
 	// other variables
-	var items, v, t;
+	var items, v, t, startindex = 0;
 	if(typeof(a[0]) == "object")
 	{
 		m = true;
