@@ -166,12 +166,12 @@ $.fn.numeric.keypress = function(e)
 			//If there is a decimal.
 			if (decimalPosition >= 0)
 			{
+				decimalsQuantity = this.value.length - decimalPosition - 1;
 				//If the cursor is after the decimal.
 				if ($.fn.getSelectionStart(this) > decimalPosition)
-					allow = this.value.length - decimalPosition - 1 < $.data(this, "numeric.scale");
+					allow = decimalsQuantity < $.data(this, "numeric.scale");
 				else
 				{
-					decimalsQuantity = this.value.length - decimalPosition - 1;
 					integersQuantity = (this.value.length - 1) - decimalsQuantity;
 					//If precision > 0, integers and decimals quantity should not be greater than precision
 					if (integersQuantity < ($.data(this, "numeric.precision") - $.data(this, "numeric.scale")))
