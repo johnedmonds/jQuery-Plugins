@@ -1,4 +1,3 @@
-/*
  *
  * Copyright (c) 2006-2011 Sam Collett (http://www.texotela.co.uk)
  * Dual licensed under the MIT (http://www.opensource.org/licenses/mit-license.php)
@@ -182,11 +181,12 @@ $.fn.numeric.keypress = function(e)
 				}
 			}
 			//If there is no decimal
-			else
+			else {
 				if ($.data(this, "numeric.precision") > 0)
 					allow = this.value.replace($.data(this, "numeric.decimal"), "").length < $.data(this, "numeric.precision") - $.data(this, "numeric.scale");
 				else
 					allow = true;
+			}
 		}
 		else
 			// If precision > 0, make sure there's not more digits than precision
